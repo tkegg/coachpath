@@ -761,9 +761,13 @@ function register(inputId, showSuccess) {
     }, 1800);
     return;
   }
-  // TODO: ここをGoogle FormsのURLに差し替え
-  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfrg0tK7aa0X-cuxgwXks_I1h45rcOuqy2Z7mshP4TbH9vaag/viewform?usp=publish-editor';
-  window.open(formUrl, '_blank');
+
+  const formId = '1FAIpQLSfk4fW6YYhBLsxG9E-1-Ery-SorKmScIIWyozV9ArNGvetglQ';
+  const entryId = 'entry.1480878145';
+  const url = `https://docs.google.com/forms/d/e/${formId}/formResponse?${entryId}=${encodeURIComponent(email)}&submit=Submit`;
+
+  fetch(url, { method: 'POST', mode: 'no-cors' });
+
   input.value = '';
   if (showSuccess) {
     document.getElementById('success-msg').style.display = 'block';
