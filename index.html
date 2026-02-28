@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoachPath - AI学習コーチ</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Syne:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans JP', sans-serif; background:#fff; color:#0f172a; line-height:1.6; }
+        h1,h2,h3 { font-family: 'Syne', sans-serif; color:#0f172a; }
+        a { color: #3b82f6; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+        nav { display:flex; justify-content: space-between; align-items: center; padding:1rem 2rem; position:fixed; width:100%; background: rgba(255,255,255,0.95); z-index:100; }
+        nav .container { justify-content: space-between; padding:10px; }
+        .btn { display:inline-block; background:#3b82f6; color:#fff; padding:0.6rem 1.2rem; border:none; border-radius:4px; cursor:pointer; font-weight:700; }
+        .btn:hover { background:#2563eb; }
+        section { padding:4rem 0; opacity:0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        section.visible { opacity:1; transform: translateY(0); }
+        .hero { text-align:center; padding-top:120px; }
+        .hero h1 { font-size:2.4rem; margin-bottom:1rem; }
+        .hero p { margin-bottom:1.5rem; }
+        .form-group { margin-bottom:1rem; }
+        input[type=email] { width:100%; padding:0.8rem; border:1px solid #cbd5e1; border-radius:4px; }
+        .note { font-size:0.85rem; color:#64748b; }
+        .cards { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1.5rem; }
+        .card { flex:1 1 250px; border:1px solid #e2e8f0; border-radius:6px; padding:1rem; background:#f8fafc; }
+        .steps { display:flex; flex-direction:column; gap:1.5rem; }
+        .step { display:flex; align-items:flex-start; gap:1rem; }
+        .step-number { font-size:1.5rem; font-weight:700; color:#3b82f6; }
+        table { width:100%; border-collapse:collapse; margin-top:1rem; }
+        th, td { border:1px solid #e2e8f0; padding:0.75rem; text-align:left; }
+        th { background:#f1f5f9; }
+        footer { text-align:center; padding:2rem 0; font-size:0.85rem; color:#64748b; }
+        /* responsive adjustments */
+        @media(max-width:600px){ .cards{flex-direction:column;} .steps{gap:1rem;} }
+    </style>
+</head>
+<body>
+    <nav class="container">
+        <div class="logo"><strong>CoachPath</strong></div>
+        <button class="btn" id="nav-cta">事前登録する</button>
+    </nav>
+    <main>
+        <section class="hero" id="hero">
+            <div class="container">
+                <h1>脱線しても、必ず戻れる。</h1>
+                <p>ゴールとロードマップを記憶したAI学習コーチ。質問すればいつでも軌道修正。社会人の勉強を迷わず継続。</p>
+                <div class="form-group">
+                    <input type="email" id="hero-email" placeholder="メールアドレス" aria-label="メールアドレス">
+                </div>
+                <button class="btn" id="hero-submit">事前登録</button>
+                <p class="note">完全無料・スパムなし・いつでも解除可能</p>
+            </div>
+        </section>
+        <section id="pain">
+            <div class="container">
+                <h2>学習が続かない、本当の理由。</h2>
+                <div class="cards">
+                    <div class="card">
+                        <strong>ロードマップが守られない</strong>
+                        <p>計画を立てても実行が難しい。</p>
+                    </div>
+                    <div class="card">
+                        <strong>脱線したら戻れない</strong>
+                        <p>質問するたびに方向性を見失う。</p>
+                    </div>
+                    <div class="card">
+                        <strong>社会人の学習時間は平均6分/日</strong>
+                        <p>まとまった時間を確保できない。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="how">
+            <div class="container">
+                <h2>3ステップで、迷わない学習を。</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">STEP01</div>
+                        <div>ゴールを設定する</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">STEP02</div>
+                        <div>AIコーチに質問する</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">STEP03</div>
+                        <div>自動で軌道修正される</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="comparison">
+            <div class="container">
+                <h2>既存ツールとの違い。</h2>
+                <table>
+                    <thead>
+                        <tr><th>比較軸</th><th>ChatGPT・技術書</th><th>CoachPath</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>ゴールの記憶</td><td>なし</td><td>あり</td></tr>
+                        <tr><td>脱線したとき</td><td>答え探しで迷う</td><td>軌道修正</td></tr>
+                        <tr><td>個人への最適化</td><td>手動</td><td>自動</td></tr>
+                        <tr><td>費用</td><td>0?数千円</td><td>無料</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="cta">
+            <div class="container">
+                <h2>リリース時に、真っ先にお知らせします。</h2>
+                <div class="form-group">
+                    <input type="email" id="cta-email" placeholder="メールアドレス" aria-label="メールアドレス">
+                </div>
+                <button class="btn" id="cta-submit">無料で事前登録する</button>
+                <p class="note" id="thankyou" style="display:none;">登録ありがとうございます！リリース情報をお送りします。</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">&copy; 2026 CoachPath</div>
+    </footer>
+
+    <script>
+        // scroll observer for fade-in
+        document.addEventListener('DOMContentLoaded', function(){
+            const sections = document.querySelectorAll('section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting){
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            sections.forEach(sec => observer.observe(sec));
+
+            // smooth scroll for nav button
+            const navBtn = document.getElementById('nav-cta');
+            navBtn.addEventListener('click', () => {
+                document.getElementById('cta').scrollIntoView({ behavior:'smooth' });
+            });
+
+            // form handlers
+            function handleSubmit(inputId, submitId, thankyouId){
+                const input = document.getElementById(inputId);
+                const btn = document.getElementById(submitId);
+                const thank = thankyouId ? document.getElementById(thankyouId) : null;
+                btn.addEventListener('click', () => {
+                    const email = input.value.trim();
+                    if(!email.includes('@')){
+                        alert('有効なメールアドレスを入力してください');
+                        return;
+                    }
+                    console.log('登録メール:', email);
+                    // Googleフォームに差し替える場合はここを変更
+                    input.value='';
+                    if(thank){ thank.style.display='block'; }
+                });
+            }
+            handleSubmit('hero-email','hero-submit');
+            handleSubmit('cta-email','cta-submit','thankyou');
+        });
+    </script>
+</body>
+</html>
