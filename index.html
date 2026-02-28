@@ -1,169 +1,785 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoachPath - AI学習コーチ</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Syne:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Basic Reset */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans JP', sans-serif; background:#fff; color:#0f172a; line-height:1.6; }
-        h1,h2,h3 { font-family: 'Syne', sans-serif; color:#0f172a; }
-        a { color: #3b82f6; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
-        nav { display:flex; justify-content: space-between; align-items: center; padding:1rem 2rem; position:fixed; width:100%; background: rgba(255,255,255,0.95); z-index:100; }
-        nav .container { justify-content: space-between; padding:10px; }
-        .btn { display:inline-block; background:#3b82f6; color:#fff; padding:0.6rem 1.2rem; border:none; border-radius:4px; cursor:pointer; font-weight:700; }
-        .btn:hover { background:#2563eb; }
-        section { padding:4rem 0; opacity:0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-        section.visible { opacity:1; transform: translateY(0); }
-        .hero { text-align:center; padding-top:120px; }
-        .hero h1 { font-size:2.4rem; margin-bottom:1rem; }
-        .hero p { margin-bottom:1.5rem; }
-        .form-group { margin-bottom:1rem; }
-        input[type=email] { width:100%; padding:0.8rem; border:1px solid #cbd5e1; border-radius:4px; }
-        .note { font-size:0.85rem; color:#64748b; }
-        .cards { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1.5rem; }
-        .card { flex:1 1 250px; border:1px solid #e2e8f0; border-radius:6px; padding:1rem; background:#f8fafc; }
-        .steps { display:flex; flex-direction:column; gap:1.5rem; }
-        .step { display:flex; align-items:flex-start; gap:1rem; }
-        .step-number { font-size:1.5rem; font-weight:700; color:#3b82f6; }
-        table { width:100%; border-collapse:collapse; margin-top:1rem; }
-        th, td { border:1px solid #e2e8f0; padding:0.75rem; text-align:left; }
-        th { background:#f1f5f9; }
-        footer { text-align:center; padding:2rem 0; font-size:0.85rem; color:#64748b; }
-        /* responsive adjustments */
-        @media(max-width:600px){ .cards{flex-direction:column;} .steps{gap:1rem;} }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoachPath – 脱線しても、必ず戻れる。</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy-mid: #0f2040;
+  --blue: #2563eb;
+  --blue-light: #3b82f6;
+  --blue-pale: #dbeafe;
+  --sky: #e0f2fe;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-400: #94a3b8;
+  --gray-600: #475569;
+  --gray-800: #1e293b;
+  --accent: #0ea5e9;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+  background: var(--white);
+  color: var(--gray-800);
+  overflow-x: hidden;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 68px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+}
+
+.logo span { color: var(--blue); }
+
+.nav-cta {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.nav-cta:hover { background: #1d4ed8; transform: translateY(-1px); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 48px 80px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f0f9ff 100%);
+}
+
+/* Decorative circles */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14,165,233,0.06) 0%, transparent 70%);
+  bottom: -50px; left: -50px;
+  pointer-events: none;
+}
+
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.hero-left { position: relative; z-index: 1; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--blue-pale);
+  color: var(--blue);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  letter-spacing: 0.02em;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: blink 2s ease infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--navy);
+  margin-bottom: 24px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--blue);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--gray-600);
+  line-height: 1.8;
+  margin-bottom: 40px;
+  font-weight: 300;
+}
+
+.hero-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.hero-form input {
+  flex: 1;
+  padding: 14px 18px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+  color: var(--gray-800);
+}
+.hero-form input::placeholder { color: var(--gray-400); }
+.hero-form input:focus { border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+
+.hero-form button {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.hero-form button:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(37,99,235,0.25); }
+
+.hero-note {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  display: flex;
+  gap: 16px;
+}
+.hero-note span::before { content: '✓ '; color: var(--blue); }
+
+/* Hero visual */
+.hero-right {
+  position: relative;
+  z-index: 1;
+}
+
+.mockup {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(10,22,40,0.12), 0 4px 16px rgba(10,22,40,0.06);
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+}
+
+.mockup-header {
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.r { background: #ff5f57; }
+.dot.y { background: #febc2e; }
+.dot.g { background: #28c840; }
+
+.mockup-body { padding: 24px; }
+
+.progress-bar-wrap {
+  margin-bottom: 20px;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--gray-600);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.progress-track {
+  height: 6px;
+  background: var(--gray-100);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 42%;
+  background: linear-gradient(90deg, var(--blue), var(--accent));
+  border-radius: 100px;
+}
+
+.chat-bubble {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.avatar.ai { background: var(--blue); color: #fff; font-size: 0.65rem; }
+.avatar.user { background: var(--gray-100); color: var(--gray-600); }
+
+.bubble {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  max-width: 88%;
+}
+.bubble.ai { background: var(--blue-pale); color: var(--navy); }
+.bubble.user { background: var(--gray-100); color: var(--gray-700); }
+
+.return-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* ─── SECTION SHARED ─── */
+.section {
+  padding: 96px 48px;
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  font-size: 1rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  max-width: 520px;
+  font-weight: 300;
+}
+
+/* ─── PAIN ─── */
+.pain { background: var(--gray-50); }
+
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 56px;
+}
+
+.pain-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 32px;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.pain-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(10,22,40,0.08); }
+
+.pain-icon {
+  width: 48px; height: 48px;
+  background: var(--blue-pale);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+}
+
+.pain-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+
+.pain-card p {
+  font-size: 0.88rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ─── HOW ─── */
+.how { background: var(--white); }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 56px;
+  position: relative;
+}
+
+.steps-grid::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 16.6%;
+  right: 16.6%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--blue-pale), var(--blue), var(--blue-pale));
+  z-index: 0;
+}
+
+.step {
+  text-align: center;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.step-num-wrap {
+  width: 48px; height: 48px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 0 6px var(--blue-pale);
+}
+
+.step h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+
+.step p {
+  font-size: 0.85rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ─── COMPARISON ─── */
+.comparison { background: var(--navy); }
+.comparison .section-title { color: var(--white); }
+.comparison .section-sub { color: rgba(255,255,255,0.5); }
+.comparison .eyebrow { color: var(--accent); }
+
+.comp-table {
+  margin-top: 56px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.comp-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+}
+
+.comp-row.header { background: rgba(255,255,255,0.05); }
+
+.comp-cell {
+  padding: 18px 28px;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.55);
+  border-right: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  font-weight: 300;
+}
+.comp-cell:last-child { border-right: none; }
+.comp-row:last-child .comp-cell { border-bottom: none; }
+
+.comp-row.header .comp-cell {
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+.comp-cell.ours {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.comp-cell.ours .check { margin-right: 6px; }
+
+/* ─── CTA ─── */
+.cta-section {
+  background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+  text-align: center;
+}
+
+.cta-form {
+  max-width: 420px;
+  margin: 40px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cta-form input {
+  padding: 16px 20px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+.cta-form input::placeholder { color: var(--gray-400); }
+.cta-form input:focus { border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+
+.cta-form button {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cta-form button:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,99,235,0.25); }
+
+.success-msg {
+  display: none;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.cta-note {
+  margin-top: 14px;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+.cta-note span::before { content: '✓ '; color: var(--blue); }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--navy);
+  padding: 32px 48px;
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  font-size: 0.8rem;
+}
+
+/* ─── FADE IN ─── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .hero { padding: 100px 20px 60px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero-right { display: none; }
+  .section { padding: 64px 20px; }
+  .pain-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; gap: 32px; }
+  .steps-grid::after { display: none; }
+  .comp-row { grid-template-columns: 1fr 1fr; }
+  .comp-row .comp-cell:first-child { display: none; }
+  footer { padding: 24px 20px; }
+}
+</style>
 </head>
 <body>
-    <nav class="container">
-        <div class="logo"><strong>CoachPath</strong></div>
-        <button class="btn" id="nav-cta">事前登録する</button>
-    </nav>
-    <main>
-        <section class="hero" id="hero">
-            <div class="container">
-                <h1>脱線しても、必ず戻れる。</h1>
-                <p>ゴールとロードマップを記憶したAI学習コーチ。質問すればいつでも軌道修正。社会人の勉強を迷わず継続。</p>
-                <div class="form-group">
-                    <input type="email" id="hero-email" placeholder="メールアドレス" aria-label="メールアドレス">
-                </div>
-                <button class="btn" id="hero-submit">事前登録</button>
-                <p class="note">完全無料・スパムなし・いつでも解除可能</p>
-            </div>
-        </section>
-        <section id="pain">
-            <div class="container">
-                <h2>学習が続かない、本当の理由。</h2>
-                <div class="cards">
-                    <div class="card">
-                        <strong>ロードマップが守られない</strong>
-                        <p>計画を立てても実行が難しい。</p>
-                    </div>
-                    <div class="card">
-                        <strong>脱線したら戻れない</strong>
-                        <p>質問するたびに方向性を見失う。</p>
-                    </div>
-                    <div class="card">
-                        <strong>社会人の学習時間は平均6分/日</strong>
-                        <p>まとまった時間を確保できない。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="how">
-            <div class="container">
-                <h2>3ステップで、迷わない学習を。</h2>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-number">STEP01</div>
-                        <div>ゴールを設定する</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">STEP02</div>
-                        <div>AIコーチに質問する</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">STEP03</div>
-                        <div>自動で軌道修正される</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="comparison">
-            <div class="container">
-                <h2>既存ツールとの違い。</h2>
-                <table>
-                    <thead>
-                        <tr><th>比較軸</th><th>ChatGPT・技術書</th><th>CoachPath</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>ゴールの記憶</td><td>なし</td><td>あり</td></tr>
-                        <tr><td>脱線したとき</td><td>答え探しで迷う</td><td>軌道修正</td></tr>
-                        <tr><td>個人への最適化</td><td>手動</td><td>自動</td></tr>
-                        <tr><td>費用</td><td>0?数千円</td><td>無料</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <section id="cta">
-            <div class="container">
-                <h2>リリース時に、真っ先にお知らせします。</h2>
-                <div class="form-group">
-                    <input type="email" id="cta-email" placeholder="メールアドレス" aria-label="メールアドレス">
-                </div>
-                <button class="btn" id="cta-submit">無料で事前登録する</button>
-                <p class="note" id="thankyou" style="display:none;">登録ありがとうございます！リリース情報をお送りします。</p>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <div class="container">&copy; 2026 CoachPath</div>
-    </footer>
 
-    <script>
-        // scroll observer for fade-in
-        document.addEventListener('DOMContentLoaded', function(){
-            const sections = document.querySelectorAll('section');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if(entry.isIntersecting){
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            sections.forEach(sec => observer.observe(sec));
+<!-- NAV -->
+<nav>
+  <div class="logo">Coach<span>Path</span></div>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">事前登録する →</button>
+</nav>
 
-            // smooth scroll for nav button
-            const navBtn = document.getElementById('nav-cta');
-            navBtn.addEventListener('click', () => {
-                document.getElementById('cta').scrollIntoView({ behavior:'smooth' });
-            });
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">🚀 現在、事前登録受付中</div>
+      <h1>脱線しても、<br><em>必ず戻れる。</em></h1>
+      <p class="hero-sub">
+        ChatGPTで学習プランを立てても、質問するたびに迷子になる。<br>
+        CoachPathは、あなたのゴールを記憶したまま伴走する<br>AI学習コーチです。
+      </p>
+      <div class="hero-form">
+        <input type="email" id="hero-email" placeholder="メールアドレスを入力" />
+        <button onclick="register('hero-email')">登録する</button>
+      </div>
+      <div class="hero-note">
+        <span>完全無料</span>
+        <span>スパムなし</span>
+        <span>いつでも解除</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="mockup">
+        <div class="mockup-header">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        </div>
+        <div class="mockup-body">
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>🎯 STEP 3 / 7　Pythonの関数を理解する</span>
+              <span>42%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill"></div></div>
+          </div>
+          <div class="chat-bubble">
+            <div class="avatar user">私</div>
+            <div class="bubble user">オブジェクト指向って何ですか？</div>
+          </div>
+          <div class="chat-bubble">
+            <div class="avatar ai">AI</div>
+            <div class="bubble ai">
+              オブジェクト指向とは、データと処理をひとまとめにする設計思想です。今学んでいる「関数」の延長線上にある概念ですが、まずは関数を完全に理解してからにしましょう。
+              <div class="return-tag">↩ STEP 3「関数」に戻りましょう</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-            // form handlers
-            function handleSubmit(inputId, submitId, thankyouId){
-                const input = document.getElementById(inputId);
-                const btn = document.getElementById(submitId);
-                const thank = thankyouId ? document.getElementById(thankyouId) : null;
-                btn.addEventListener('click', () => {
-                    const email = input.value.trim();
-                    if(!email.includes('@')){
-                        alert('有効なメールアドレスを入力してください');
-                        return;
-                    }
-                    console.log('登録メール:', email);
-                    // Googleフォームに差し替える場合はここを変更
-                    input.value='';
-                    if(thank){ thank.style.display='block'; }
-                });
-            }
-            handleSubmit('hero-email','hero-submit');
-            handleSubmit('cta-email','cta-submit','thankyou');
-        });
-    </script>
+<!-- PAIN -->
+<section class="section pain">
+  <div class="section-inner">
+    <div class="eyebrow">Problem</div>
+    <h2 class="section-title">学習が続かない、本当の理由。</h2>
+    <p class="section-sub">時間がないのではなく、「続ける仕組み」がない。それだけです。</p>
+    <div class="pain-grid">
+      <div class="pain-card fade-in">
+        <div class="pain-icon">🗺️</div>
+        <h3>ロードマップが守られない</h3>
+        <p>最初に計画を立てても、ChatGPTに質問するたびに話が広がり、いつの間にか別のトピックを勉強している。</p>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="pain-icon">🌀</div>
+        <h3>脱線したら戻れない</h3>
+        <p>「関数」を調べたら「クラス」へ、「クラス」から「設計パターン」へ。気づけば元のゴールが見えなくなっている。</p>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="pain-icon">⏱️</div>
+        <h3>社会人の学習時間は平均6分/日</h3>
+        <p>忙しい中の貴重な時間を、迷子のまま消費している。限られた時間を最大限に活かす仕組みが必要。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="section how">
+  <div class="section-inner">
+    <div class="eyebrow">How It Works</div>
+    <h2 class="section-title">3ステップで、迷わない学習を。</h2>
+    <p class="section-sub">難しい設定は不要。ゴールを入力するだけで、あとはAIが全部やります。</p>
+    <div class="steps-grid">
+      <div class="step fade-in">
+        <div class="step-num-wrap">1</div>
+        <h3>ゴールを設定する</h3>
+        <p>「Pythonを3ヶ月で、転職のために学びたい」と入力するだけ。AIが最適なカリキュラムを自動生成します。</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num-wrap">2</div>
+        <h3>AIコーチに質問する</h3>
+        <p>わからないことを自由に質問してOK。CoachPathはあなたのゴールとロードマップを記憶したまま回答します。</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num-wrap">3</div>
+        <h3>自動で軌道修正される</h3>
+        <p>回答の最後に必ず現在のステップを提示。脱線しても、必ず元のロードマップに戻ってこられます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section comparison">
+  <div class="section-inner">
+    <div class="eyebrow">Comparison</div>
+    <h2 class="section-title">既存ツールとの違い。</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.45)">ChatGPTやスクールで解決できなかった理由がここにあります。</p>
+    <div class="comp-table fade-in">
+      <div class="comp-row header">
+        <div class="comp-cell">比較軸</div>
+        <div class="comp-cell">ChatGPT・技術書・スクール</div>
+        <div class="comp-cell">CoachPath</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">ゴールの記憶</div>
+        <div class="comp-cell">毎回リセットされる</div>
+        <div class="comp-cell ours"><span class="check">✓</span>常に記憶・表示</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">脱線したとき</div>
+        <div class="comp-cell">そのまま迷子になる</div>
+        <div class="comp-cell ours"><span class="check">✓</span>自動で軌道修正</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">個人への最適化</div>
+        <div class="comp-cell">全員に同じ内容</div>
+        <div class="comp-cell ours"><span class="check">✓</span>ゴールに合わせて生成</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">費用</div>
+        <div class="comp-cell">スクールは月数万円〜</div>
+        <div class="comp-cell ours"><span class="check">✓</span>月額数千円を予定</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section" id="cta">
+  <div class="section-inner" style="text-align:center">
+    <div class="eyebrow">事前登録</div>
+    <h2 class="section-title">リリース時に、真っ先にお知らせします。</h2>
+    <p class="section-sub" style="margin: 0 auto 0; text-align:center">
+      現在開発中です。事前登録いただいた方には、リリース通知と早期アクセスをお届けします。
+    </p>
+    <div class="cta-form">
+      <input type="email" id="cta-email" placeholder="メールアドレスを入力" />
+      <button onclick="register('cta-email', true)">無料で事前登録する →</button>
+      <div class="success-msg" id="success-msg">✓ 登録ありがとうございます！リリース時にご連絡します。</div>
+    </div>
+    <div class="cta-note">
+      <span>完全無料</span>
+      <span>スパムなし</span>
+      <span>いつでも解除可能</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 CoachPath. All rights reserved.
+</footer>
+
+<script>
+function register(inputId, showSuccess) {
+  const input = document.getElementById(inputId);
+  const email = input.value.trim();
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = '#ef4444';
+    input.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)';
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.style.boxShadow = '';
+    }, 1800);
+    return;
+  }
+  // TODO: ここをGoogle FormsのURLに差し替え
+  console.log('登録:', email);
+  input.value = '';
+  if (showSuccess) {
+    document.getElementById('success-msg').style.display = 'block';
+  } else {
+    document.getElementById('cta').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => document.getElementById('success-msg').style.display = 'block', 600);
+  }
+}
+
+// Fade-in on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
