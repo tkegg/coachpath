@@ -762,7 +762,8 @@ function register(inputId, showSuccess) {
     return;
   }
   // TODO: ここをGoogle FormsのURLに差し替え
-  console.log('登録:', email);
+  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfrg0tK7aa0X-cuxgwXks_I1h45rcOuqy2Z7mshP4TbH9vaag/viewform?usp=publish-editor';
+  window.open(formUrl, '_blank');
   input.value = '';
   if (showSuccess) {
     document.getElementById('success-msg').style.display = 'block';
@@ -783,3 +784,4 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
+
